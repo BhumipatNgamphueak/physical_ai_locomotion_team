@@ -27,7 +27,11 @@ ament_python_install_package(${PROJECT_NAME})
 
 # Install Python executables
 install(PROGRAMS
+<<<<<<< HEAD
+  scripts/controller.py
+=======
   scripts/dummy_script.py
+>>>>>>> parent of 356caa9 (Update)
   DESTINATION lib/${PROJECT_NAME}
 )
 

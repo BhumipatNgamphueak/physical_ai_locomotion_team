@@ -1,0 +1,6 @@
+src/.vscode
+src/.vscode/browse.vc.db
+src/.vscode/browse.vc.db-shm
+*.db
+*.db-shm
+/src/.vscode
