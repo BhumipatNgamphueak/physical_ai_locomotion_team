@@ -8,9 +8,29 @@ from geometry_msgs.msg import PoseStamped
 class DummyNode(Node):
     def __init__(self):
         super().__init__('state_controller_node')
-        self.create_subscription(PoseStamped, 'foot/pose' ,self.foot_pose_callback,10)
+        self.create_subscription(PoseStamped, 'top_right_leg/foot/pose' ,self.top_right_leg_footpose_callback,10)
+        self.create_subscription(PoseStamped, 'top_left_leg/foot/pose' ,self.top_left_leg_footpose_callback,10)
+        self.create_subscription(PoseStamped, 'middle_right_leg/foot/pose' ,self.middle_right_leg_footpose_callback,10)
+        self.create_subscription(PoseStamped, 'middle_left_leg/foot/pose' ,self.middle_left_leg_footpose_callback,10)
+        self.create_subscription(PoseStamped, 'bottom_right_leg/foot/pose' ,self.bottom_right_leg_footpose_callback,10)
+        self.create_subscription(PoseStamped, 'bottom_left_leg/foot/pose' ,self.bottom_left_leg_footpose_callback,10)
         
-    def foot_pose_callback(self,msg):
+    def top_right_leg_footpose_callback(self,msg):
+        pass
+
+    def top_left_leg_footpose_callback(self,msg):
+        pass
+
+    def middle_right_leg_footpose_callback(self,msg):
+        pass
+
+    def middle_left_leg_footpose_callback(self,msg):
+        pass
+
+    def bottom_right_leg_footpose_callback(self,msg):
+        pass
+
+    def bottom_left_leg_footpose_callback(self,msg):
         pass
 
 def main(args=None):
