@@ -3,8 +3,9 @@
 
     <xacro:include filename="inertial_macros.xacro" />
     <xacro:include filename="hexapod_params.xacro" />
-    <xacro:include filename="robot_material.xacro" />
-
+    <xacro:include filename="robot_material.xacro" />\
+    <xacro:include filename="gazebo_full.xacro" />
+    
     <!-- BASE LINK -->
     <link name="world"/>
     
@@ -13,6 +14,14 @@
         <child link="base_link"/>
         <origin xyz="0 0 ${world_height}" rpy="0 0 0"/>
     </joint>
+
+    <!-- <joint name="world_to_base" type="prismatic">
+        <parent link="world"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 ${world_height}" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <limit effort="1000" velocity="10" lower="-2" upper="2"/>
+    </joint> -->
 
     <link name="base_link">
         <inertial>
@@ -29,7 +38,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://hexapod_description/meshes/base_link.STL" />
+                <mesh filename= "package://hexapod_description/meshes/base_link.STL" />
             </geometry>
             <material name="white"/>
         </visual>
@@ -41,7 +50,7 @@
         </collision>
     </link>
 
-    <joint name="Base_Joint" type="revolute">
+    <joint name="base_joint" type="revolute">
         <parent link="base_link"/>
         <child link="Link_1"/>
         <origin xyz="${base_joint_x} ${base_joint_y} ${base_joint_z}" rpy="0 0 0"/>
