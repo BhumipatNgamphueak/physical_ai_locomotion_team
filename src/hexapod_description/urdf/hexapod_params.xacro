@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    
+    <!-- Constants -->
+    <xacro:property name="PI" value="3.14159265359"/>
+    
+    <!-- Joint parameters from original URDF -->
+    <xacro:property name="base_joint_x" value="0.0"/>
+    <xacro:property name="base_joint_y" value="0.0"/>
+    <xacro:property name="base_joint_z" value="0.0"/>
+    
+    <xacro:property name="hip_joint_x" value="0.078"/>
+    <xacro:property name="hip_joint_y" value="0.0"/>
+    <xacro:property name="hip_joint_z" value="0.0010006"/>
+    
+    <xacro:property name="knee_joint_x" value="0.10755"/>
+    <xacro:property name="knee_joint_y" value="-0.05321"/>
+    <xacro:property name="knee_joint_z" value="0.0"/>
+    
+    <!-- Link 3 length (estimated from inertial data) -->
+    <xacro:property name="link3_length" value="0.16"/>
+    
+    <!-- Masses from original URDF -->
+    <xacro:property name="mass_base" value="0.0303802913201426"/>
+    <xacro:property name="mass_link1" value="0.118581468899565"/>
+    <xacro:property name="mass_link2" value="0.145272404054406"/>
+    <xacro:property name="mass_link3" value="0.329216952633153"/>
+    <xacro:property name="mass_foot_contact" value="0.001"/>
+    
+    <!-- Joint limits -->
+    <xacro:property name="joint_effort" value="10"/>
+    <xacro:property name="joint_velocity" value="3.14"/>
+    <xacro:property name="joint_lower_limit" value="-3.142"/>
+    <xacro:property name="joint_upper_limit" value="3.142"/>
+    
+    <!-- Joint dynamics - Base Joint -->
+    <xacro:property name="base_joint_damping" value="0.1"/>
+    <xacro:property name="base_joint_friction" value="0.05"/>
+    
+    <!-- Joint dynamics - Hip Joint -->
+    <xacro:property name="hip_joint_damping" value="0.1"/>
+    <xacro:property name="hip_joint_friction" value="0.05"/>
+    
+    <!-- Joint dynamics - Knee Joint -->
+    <xacro:property name="knee_joint_damping" value="0.1"/>
+    <xacro:property name="knee_joint_friction" value="0.05"/>
+    
+    <!-- World to base offset -->
+    <xacro:property name="world_height" value="0.5"/>
+    
+    <!-- Foot contact sphere radius -->
+    <xacro:property name="foot_radius" value="0.01"/>
+    
+</robot>

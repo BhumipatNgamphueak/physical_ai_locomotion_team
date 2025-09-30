@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hexapod">
+
+    <xacro:include filename="inertial_macros.xacro" />
+    <xacro:include filename="hexapod_params.xacro" />
+    <xacro:include filename="robot_material.xacro" />
+
+    <!-- BASE LINK -->
+    <link name="world"/>
+    
+    <joint name="world_to_base" type="fixed">
+        <parent link="world"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 ${world_height}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="base_link">
+        <inertial>
+            <origin xyz="0.000381401538697633 -9.99939807613602E-05 -0.00106663113893346" rpy="0 0 0" />
+            <mass value="${mass_base}" />
+            <inertia
+                ixx="3.43143025554787E-06"
+                ixy="-7.09338496539902E-08"
+                ixz="-1.05468910994179E-10"
+                iyy="3.18656787029286E-06"
+                iyz="2.81183124124456E-11"
+                izz="6.42610473218681E-06" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://hexapod_description/meshes/base_link.STL" />
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://hexapod_description/meshes/base_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="Base_Joint" type="revolute">
+        <parent link="base_link"/>
+        <child link="Link_1"/>
+        <origin xyz="${base_joint_x} ${base_joint_y} ${base_joint_z}" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+        <limit effort="${joint_effort}" velocity="${joint_velocity}" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        <dynamics damping="${base_joint_damping}" friction="${base_joint_friction}"/>
+    </joint>
+
+    <link name="Link_1">
+        <inertial>
+            <origin xyz="0.0564139782174204 -0.00286798125346344 0.00140027742092083" rpy="0 0 0" />
+            <mass value="${mass_link1}" />
+            <inertia
+                ixx="9.68861557542703E-05"
+                ixy="8.34533845584309E-06"
+                ixz="2.58858653395562E-06"
+                iyy="0.000130775587102779"
+                iyz="-1.81400796532094E-07"
+                izz="0.000125009688560074" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://hexapod_description/meshes/Link_1.STL" />
+            </geometry>
+            <material name="red"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://hexapod_description/meshes/Link_1.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="hip_joint" type="revolute">
+        <parent link="Link_1"/>
+        <child link="Link_2"/>
+        <origin xyz="${hip_joint_x} ${hip_joint_y} ${hip_joint_z}" rpy="-1.5708 0 0"/>
+        <axis xyz="0 0 1"/>
+        <limit effort="${joint_effort}" velocity="${joint_velocity}" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        <dynamics damping="${hip_joint_damping}" friction="${hip_joint_friction}"/>
+    </joint>
+
+    <link name="Link_2">
+        <inertial>
+            <origin xyz="0.0568458239545887 -0.0398512588217983 -0.00649544534655699" rpy="0 0 0" />
+            <mass value="${mass_link2}" />
+            <inertia
+                ixx="7.80961144931399E-05"
+                ixy="6.85288838865275E-05"
+                ixz="-6.68253785407502E-12"
+                iyy="0.000182714166388773"
+                iyz="8.54472513470729E-12"
+                izz="0.000221995812976281" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://hexapod_description/meshes/Link_2.STL" />
+            </geometry>
+            <material name="green"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://hexapod_description/meshes/Link_2.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="knee_joint" type="revolute">
+        <parent link="Link_2"/>
+        <child link="Link_3"/>
+        <origin xyz="${knee_joint_x} ${knee_joint_y} ${knee_joint_z}" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+        <limit effort="${joint_effort}" velocity="${joint_velocity}" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        <dynamics damping="${knee_joint_damping}" friction="${knee_joint_friction}"/>
+    </joint>
+
+    <link name="Link_3">
+        <inertial>
+            <origin xyz="0.00460568033657061 0.0808756099984192 -0.00114310012924947" rpy="0 0 0" />
+            <mass value="${mass_link3}" />
+            <inertia
+                ixx="0.000201238674343573"
+                ixy="-9.7277437094948E-06"
+                ixz="-6.452540902935E-07"
+                iyy="0.000117423949612519"
+                iyz="-3.14379963523554E-06"
+                izz="0.000178478507167715" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://hexapod_description/meshes/Link_3.STL" />
+            </geometry>
+            <material name="yellow"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://hexapod_description/meshes/Link_3.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="Link_3_to_contact" type="fixed">
+        <parent link="Link_3"/>
+        <child link="foot_contact"/>
+        <origin xyz="0 ${link3_length} 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="foot_contact">
+        <visual>
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <sphere radius="${foot_radius}"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <sphere radius="${foot_radius}"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="${mass_foot_contact}"/>
+            <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+        </inertial>
+    </link>
+
+</robot>
