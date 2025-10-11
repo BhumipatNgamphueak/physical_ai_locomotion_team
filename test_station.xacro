@@ -1,0 +1,325 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="test_station">
+
+    <xacro:include filename="test_station_params.xacro" />
+    <xacro:include filename="robot_material.xacro" />
+    
+    <!-- WORLD LINK -->
+    <link name="world">
+        <inertial>
+            <mass value="0.001"/>
+            <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+        </inertial>
+    </link>
+
+    <!-- WORLD TO BASE JOINT (ROTATED 90° AROUND X-AXIS) -->
+    <joint name="world_to_base" type="fixed">
+        <parent link="world"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+    </joint>
+
+    <!-- BASE LINK -->
+    <link name="base_link">
+        <inertial>
+            <origin xyz="${base_inertial_x} ${base_inertial_y} ${base_inertial_z}" rpy="0 0 0" />
+            <mass value="${mass_base}" />
+            <inertia
+                ixx="0.0486076021163975"
+                ixy="1.70511398907679E-19"
+                ixz="1.82006048915522E-16"
+                iyy="0.0491079736049733"
+                iyz="2.37689541531146E-17"
+                izz="0.00117016823735803" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/base_link.STL" />
+            </geometry>
+            <material name="light_grey"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/base_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- LINEAR LEFT RIGHT JOINT -->
+    <joint name="linear_left_right_joint" type="prismatic">
+        <origin xyz="${linear_lr_x} ${linear_lr_y} ${linear_lr_z}" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="linear_left_right_link" />
+        <axis xyz="0 0 1" />
+        <limit 
+            lower="${linear_lr_lower}" 
+            upper="${linear_lr_upper}" 
+            effort="${linear_lr_effort}" 
+            velocity="${linear_lr_velocity}" />
+        <dynamics damping="${linear_lr_damping}" friction="${linear_lr_friction}"/>
+    </joint>
+
+    <link name="linear_left_right_link">
+        <inertial>
+            <origin xyz="${linear_lr_inertial_x} ${linear_lr_inertial_y} ${linear_lr_inertial_z}" rpy="0 0 0" />
+            <mass value="${mass_linear_lr}" />
+            <inertia
+                ixx="0.00169627285734428"
+                ixy="1.58540005954467E-08"
+                ixz="-4.41899413466922E-12"
+                iyy="0.000138748817102263"
+                iyz="-1.95167814301692E-07"
+                izz="0.00156552554170133" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/linear_left_right_link.STL" />
+            </geometry>
+            <material name="purple"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/linear_left_right_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- LINEAR UP DOWN JOINT -->
+    <joint name="linear_up_down_joint" type="prismatic">
+        <origin xyz="${linear_ud_x} ${linear_ud_y} ${linear_ud_z}" rpy="1.5708 -1.5708 0" />
+        <parent link="linear_left_right_link" />
+        <child link="linear_up_down_link" />
+        <axis xyz="0 0 1" />
+        <limit 
+            lower="${linear_ud_lower}" 
+            upper="${linear_ud_upper}" 
+            effort="${linear_ud_effort}" 
+            velocity="${linear_ud_velocity}" />
+        <dynamics damping="${linear_ud_damping}" friction="${linear_ud_friction}"/>
+    </joint>
+
+    <link name="linear_up_down_link">
+        <inertial>
+            <origin xyz="${linear_ud_inertial_x} ${linear_ud_inertial_y} ${linear_ud_inertial_z}" rpy="0 0 0" />
+            <mass value="${mass_linear_ud}" />
+            <inertia
+                ixx="4.13686670107745E-05"
+                ixy="1.19900593985171E-06"
+                ixz="-1.22768024957686E-10"
+                iyy="3.8653149726607E-05"
+                iyz="-3.33822590624228E-11"
+                izz="3.36302971003723E-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/linear_up_down_link.STL" />
+            </geometry>
+            <material name="orange"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/linear_up_down_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- HIP JOINT -->
+    <joint name="hip_joint" type="revolute">
+        <origin xyz="${hip_joint_x} ${hip_joint_y} ${hip_joint_z}" rpy="3.1416 0 0" />
+        <parent link="linear_up_down_link" />
+        <child link="hip_Link" />
+        <axis xyz="0 0 1" />
+        <limit 
+            lower="${hip_joint_lower_limit}" 
+            upper="${hip_joint_upper_limit}" 
+            effort="${hip_joint_effort}" 
+            velocity="${hip_joint_velocity}" />
+        <dynamics damping="${hip_joint_damping}" friction="${hip_joint_friction}"/>
+    </joint>
+
+    <link name="hip_Link">
+        <inertial>
+            <origin xyz="${hip_inertial_x} ${hip_inertial_y} ${hip_inertial_z}" rpy="0 0 0" />
+            <mass value="${mass_hip}" />
+            <inertia
+                ixx="9.68903173356646E-05"
+                ixy="8.34528714502665E-06"
+                ixz="2.58859686125778E-06"
+                iyy="0.000130089779114224"
+                iyz="-1.81408997453309E-07"
+                izz="0.000125705288980676" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/hip_Link.STL" />
+            </geometry>
+            <material name="green"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/hip_Link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- KNEE JOINT -->
+    <joint name="knee_joint" type="revolute">
+        <origin xyz="${knee_joint_x} ${knee_joint_y} ${knee_joint_z}" rpy="1.5708 0 0" />
+        <parent link="hip_Link" />
+        <child link="knee_link" />
+        <axis xyz="0 0 1" />
+        <limit 
+            lower="${knee_joint_lower_limit}" 
+            upper="${knee_joint_upper_limit}" 
+            effort="${knee_joint_effort}" 
+            velocity="${knee_joint_velocity}" />
+        <dynamics damping="${knee_joint_damping}" friction="${knee_joint_friction}"/>
+    </joint>
+
+    <link name="knee_link">
+        <inertial>
+            <origin xyz="${knee_inertial_x} ${knee_inertial_y} ${knee_inertial_z}" rpy="0 0 0" />
+            <mass value="${mass_knee}" />
+            <inertia
+                ixx="0.000131437860373885"
+                ixy="-8.62804047137843E-05"
+                ixz="3.6658676257659E-11"
+                iyy="0.000132904353189807"
+                iyz="-1.21353524894778E-10"
+                izz="0.000225517110242721" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/knee_link.STL" />
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/knee_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- ANKLE JOINT -->
+    <joint name="ankle_joint" type="revolute">
+        <origin xyz="${ankle_joint_x} ${ankle_joint_y} ${ankle_joint_z}" rpy="0 0 0" />
+        <parent link="knee_link" />
+        <child link="ankle_link" />
+        <axis xyz="0 0 1" />
+        <limit 
+            lower="${ankle_joint_lower_limit}" 
+            upper="${ankle_joint_upper_limit}" 
+            effort="${ankle_joint_effort}" 
+            velocity="${ankle_joint_velocity}" />
+        <dynamics damping="${ankle_joint_damping}" friction="${ankle_joint_friction}"/>
+    </joint>
+
+    <link name="ankle_link">
+        <inertial>
+            <origin xyz="${ankle_inertial_x} ${ankle_inertial_y} ${ankle_inertial_z}" rpy="0 0 0" />
+            <mass value="${mass_ankle}" />
+            <inertia
+                ixx="0.000199114272430942"
+                ixy="9.79867730835118E-06"
+                ixz="6.4521979966009E-07"
+                iyy="0.000115140693880005"
+                iyz="-3.14367522499582E-06"
+                izz="0.000174477589991744" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/ankle_link.STL" />
+            </geometry>
+            <material name="yellow"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/ankle_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- FOOT POINTER JOINT -->
+    <joint name="ankle_to_foot_pointer" type="fixed">
+        <parent link="ankle_link"/>
+        <child link="foot_pointer"/>
+        <origin xyz="${ee_x} ${ee_y} ${ee_z}" rpy="0 0 0"/>
+    </joint>
+
+    <!-- FOOT POINTER LINK -->
+    <link name="foot_pointer">
+        <inertial>
+            <origin xyz="${ee_inertial_x} ${ee_inertial_y} ${ee_inertial_z}" rpy="0 0 0" />
+            <mass value="${mass_end_effector}" />
+            <inertia
+                ixx="4.10445260534E-07"
+                ixy="-7.57023234258261E-13"
+                ixz="9.0993115749904E-13"
+                iyy="3.1036728395265E-07"
+                iyz="-1.63648124596683E-12"
+                izz="4.06602144316901E-07" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/end_effector.STL" />
+            </geometry>
+            <material name="red"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/end_effector.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- END EFFECTOR JOINT -->
+    <joint name="foot_pointer_to_end_effector" type="fixed">
+        <parent link="foot_pointer"/>
+        <child link="end_effector"/>
+        <origin xyz="${cp_x} ${cp_y} ${cp_z}" rpy="0 0 0"/>
+    </joint>
+
+    <!-- END EFFECTOR LINK -->
+    <link name="end_effector">
+        <inertial>
+            <origin xyz="${cp_inertial_x} ${cp_inertial_y} ${cp_inertial_z}" rpy="0 0 0" />
+            <mass value="${mass_contact_point}" />
+            <inertia
+                ixx="4.1394614742321E-07"
+                ixy="-7.5702324693834E-13"
+                ixz="9.09539836403223E-13"
+                iyy="3.18848014809972E-07"
+                iyz="-1.63645869601826E-12"
+                izz="4.15082868763662E-07" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/contract_point.STL" />
+            </geometry>
+            <material name="cyan"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/contract_point.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+</robot>
