@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+    ============================================================================
+    Gazebo Configuration - Ankle Link Only Pendulum
+    ============================================================================
+    Description: Gazebo simulation configuration for ankle link pendulum test
+    Includes: ROS2 Control interfaces and Gazebo-specific properties
+    ============================================================================
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ankle_link_gazebo">
+
+    <!-- ====================================================================== -->
+    <!-- CONFIGURATION ARGUMENTS                                                -->
+    <!-- ====================================================================== -->
+    <xacro:arg name="controller_config_file"
+               default="$(find system_identification_simulation)/config/ankle_pendulum_controller.yaml" />
+
+    <!-- ====================================================================== -->
+    <!-- ROS2 CONTROL SYSTEM                                                    -->
+    <!-- ====================================================================== -->
+    <ros2_control name="GazeboSimSystem" type="system">
+
+        <!-- Hardware Interface Plugin -->
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+
+        <!-- World to Ankle Joint Control Interfaces -->
+        <joint name="world_to_ankle">
+            <!-- Command Interface: Effort Control -->
+            <command_interface name="effort">
+                <param name="min">-50.0</param>
+                <param name="max">50.0</param>
+            </command_interface>
+            <!-- State Interfaces: Position, Velocity, Effort -->
+            <state_interface name="position">
+                <param name="initial_value"> 0.0 </param>
+            </state_interface>
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+
+    </ros2_control>
+
+    <!-- ====================================================================== -->
+    <!-- GAZEBO PLUGINS                                                         -->
+    <!-- ====================================================================== -->
+    <gazebo>
+        <!-- ROS2 Control Plugin -->
+        <plugin filename="gz_ros2_control-system"
+                name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <parameters>$(arg controller_config_file)</parameters>
+            <controller_manager_node_name>controller_manager</controller_manager_node_name>
+        </plugin>
+    </gazebo>
+
+    <!-- ====================================================================== -->
+    <!-- GAZEBO LINK PROPERTIES                                                 -->
+    <!-- ====================================================================== -->
+    <gazebo reference="ankle_link">
+        <gravity>true</gravity>
+        <self_collide>false</self_collide>
+        <material>Gazebo/Yellow</material>
+    </gazebo>
+
+</robot>

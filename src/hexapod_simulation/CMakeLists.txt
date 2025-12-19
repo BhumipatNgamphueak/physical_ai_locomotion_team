@@ -27,7 +27,11 @@ ament_python_install_package(${PROJECT_NAME})
 
 # Install Python executables
 install(PROGRAMS
+<<<<<<< Updated upstream:src/hexapod_simulation/CMakeLists.txt
   scripts/dummy_script.py
+=======
+  scripts/log_data.py
+>>>>>>> Stashed changes:src/test_station_simulation/CMakeLists.txt
   DESTINATION lib/${PROJECT_NAME}
 )
 

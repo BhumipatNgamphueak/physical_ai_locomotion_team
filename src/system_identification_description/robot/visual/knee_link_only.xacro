@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<!--
+    ============================================================================
+    Knee Link Only - Simplified Pendulum Setup
+    ============================================================================
+    Description: Single knee_link suspended from world joint for testing
+    Updated from: TestStation_Draft2.urdf
+    ============================================================================
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="knee_link_only">
+
+    <!-- ====================================================================== -->
+    <!-- INCLUDES                                                               -->
+    <!-- ====================================================================== -->
+    <xacro:include filename="knee_link_gazebo.xacro" />
+
+    <!-- ====================================================================== -->
+    <!-- MATERIALS                                                              -->
+    <!-- ====================================================================== -->
+    <material name="blue">
+        <color rgba="0.0 0.0 0.8 1.0" />
+    </material>
+
+    <!-- ====================================================================== -->
+    <!-- PHYSICAL PROPERTIES                                                    -->
+    <!-- ====================================================================== -->
+
+    <!-- Knee Link Mass -->
+    <xacro:property name="mass_knee" value="0.091" />
+
+    <!-- Knee Link Center of Mass (Inertial Frame Origin) -->
+    <xacro:property name="knee_inertial_x" value="0.0456464050051834" />
+    <xacro:property name="knee_inertial_y" value="0.0308623958898155" />
+    <xacro:property name="knee_inertial_z" value="0.00502941450993857" />
+
+    <!-- Knee Link Inertia Tensor (physically consistent, Izz = 0.0008) -->
+    <xacro:property name="knee_ixx" value="0.008" />
+    <xacro:property name="knee_ixy" value="0.0" />
+    <xacro:property name="knee_ixz" value="0.0" />
+    <xacro:property name="knee_iyy" value="0.008" />
+    <xacro:property name="knee_iyz" value="0.0" />
+    <xacro:property name="knee_izz" value="0.000175" />
+
+    <!-- Joint Limits -->
+    <xacro:property name="joint_effort_limit" value="50.0" />
+    <xacro:property name="joint_velocity_limit" value="50.0" />
+
+    <!-- ====================================================================== -->
+    <!-- WORLD LINK (Fixed Root)                                                -->
+    <!-- ====================================================================== -->
+    <link name="world">
+        <!-- Empty link - serves as fixed world reference -->
+    </link>
+
+    <gazebo reference="world">
+        <static>true</static>
+    </gazebo>
+
+    <!-- ====================================================================== -->
+    <!-- WORLD TO KNEE JOINT (Continuous - Pendulum)                            -->
+    <!-- ====================================================================== -->
+    <joint name="world_to_knee" type="continuous">
+        <parent link="world" />
+        <child link="knee_link" />
+        <!-- Position: 0.3m above ground, rotated 90° around X-axis -->
+        <origin xyz="0 0 0.3" rpy="1.5701 0 0" />
+        <!-- Rotation axis: Z-axis (pitch motion when rotated) -->
+        <axis xyz="0 0 1" />
+        <!-- Joint limits -->
+        <limit effort="${joint_effort_limit}" velocity="${joint_velocity_limit}" />
+        <!-- No damping or friction for free pendulum motion -->
+        <dynamics damping="0.0004" friction="0.0008" />
+    </joint>
+
+    <!-- ====================================================================== -->
+    <!-- KNEE LINK                                                              -->
+    <!-- ====================================================================== -->
+    <link name="knee_link">
+
+        <!-- Inertial Properties -->
+        <inertial>
+            <origin
+                xyz="${knee_inertial_x} ${knee_inertial_y} ${knee_inertial_z}"
+                rpy="0 0 0" />
+            <mass value="${mass_knee}" />
+            <inertia
+                ixx="${knee_ixx}"  ixy="${knee_ixy}"  ixz="${knee_ixz}"
+                                   iyy="${knee_iyy}"  iyz="${knee_iyz}"
+                                                      izz="${knee_izz}" />
+        </inertial>
+
+        <!-- Visual Representation -->
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://system_identification_description/meshes/knee_link_v2.STL" />
+            </geometry>
+            <material name="blue" />
+        </visual>
+
+        <!-- Collision Geometry -->
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://system_identification_description/meshes/knee_link_v2.STL" />
+            </geometry>
+        </collision>
+
+    </link>
+
+</robot>

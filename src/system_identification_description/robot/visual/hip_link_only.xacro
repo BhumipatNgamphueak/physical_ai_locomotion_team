@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<!--
+    ============================================================================
+    Hip Link Only - Simplified Pendulum Setup
+    ============================================================================
+    Description: Single hip_Link suspended from world joint for testing
+    Updated from: TestStation_Draft2.urdf
+    ============================================================================
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hip_link_only">
+
+    <!-- ====================================================================== -->
+    <!-- INCLUDES                                                               -->
+    <!-- ====================================================================== -->
+    <xacro:include filename="hip_link_gazebo.xacro" />
+
+    <!-- ====================================================================== -->
+    <!-- MATERIALS                                                              -->
+    <!-- ====================================================================== -->
+    <material name="green">
+        <color rgba="0.0 0.8 0.0 1.0" />
+    </material>
+
+    <!-- ====================================================================== -->
+    <!-- PHYSICAL PROPERTIES                                                    -->
+    <!-- ====================================================================== -->
+
+    <!-- Hip Link Mass -->
+    <xacro:property name="mass_hip" value="0.425" />
+
+    <!-- Hip Link Center of Mass (Inertial Frame Origin) -->
+    <xacro:property name="hip_inertial_x" value="0.075" />
+    <xacro:property name="hip_inertial_y" value="-0.0046750292660587" />
+    <xacro:property name="hip_inertial_z" value="0.00415169396095089" />
+
+    <!-- Hip Link Inertia Tensor (physically consistent, Izz = 0.0007) -->
+    <xacro:property name="hip_ixx" value="0.00100" />
+    <xacro:property name="hip_ixy" value="0.0" />
+    <xacro:property name="hip_ixz" value="0.0" />
+    <xacro:property name="hip_iyy" value="0.00120" />
+    <xacro:property name="hip_iyz" value="0.0" />
+    <xacro:property name="hip_izz" value="0.00050" />
+
+    <!-- ====================================================================== -->
+    <!-- WORLD LINK (Fixed Root)                                                -->
+    <!-- ====================================================================== -->
+    <link name="world">
+    </link>
+
+    <gazebo reference="world">
+        <static>true</static>
+    </gazebo>
+
+    <!-- ====================================================================== -->
+    <!-- WORLD TO HIP JOINT (Continuous - Pendulum)                             -->
+    <!-- ====================================================================== -->
+    <joint name="world_to_hip" type="continuous">
+        <parent link="world" />
+        <child link="hip_Link" />
+        <!-- Position: 0.3m above ground, rotated 90° around X-axis -->
+        <origin xyz="0 0 0.3" rpy="1.5701 0 0" />
+        <!-- Rotation axis: Z-axis (pitch motion when rotated) -->
+        <axis xyz="0 0 1" />
+        <!-- No damping or friction for free pendulum motion -->
+        <dynamics damping="0.00040" friction="0.00280" />
+    </joint>
+
+    <!-- ====================================================================== -->
+    <!-- HIP LINK                                                               -->
+    <!-- ====================================================================== -->
+    <link name="hip_Link">
+
+        <!-- Inertial Properties -->
+        <inertial>
+            <origin
+                xyz="${hip_inertial_x} ${hip_inertial_y} ${hip_inertial_z}"
+                rpy="0 0 0" />
+            <mass value="${mass_hip}" />
+            <inertia
+                ixx="${hip_ixx}"  ixy="${hip_ixy}"  ixz="${hip_ixz}"
+                                  iyy="${hip_iyy}"  iyz="${hip_iyz}"
+                                                    izz="${hip_izz}" />
+        </inertial>
+
+        <!-- Visual Representation -->
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://system_identification_description/meshes/hip_link_v2.STL" />
+            </geometry>
+            <material name="green" />
+        </visual>
+
+        <!-- Collision Geometry -->
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://system_identification_description/meshes/hip_link_v2.STL" />
+            </geometry>
+        </collision>
+
+    </link>
+
+</robot>

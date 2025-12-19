@@ -1,6 +1,35 @@
-src/.vscode
-src/.vscode/browse.vc.db
-src/.vscode/browse.vc.db-shm
+# IDE
+.vscode/
+src/.vscode/
 *.db
 *.db-shm
+<<<<<<< Updated upstream
 /src/.vscode
+=======
+
+# ROS2 Build Artifacts
+build/
+install/
+log/
+src/log/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+.pytest_cache/
+
+# Backup files
+*~
+*.bak
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+>>>>>>> Stashed changes
