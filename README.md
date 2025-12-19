@@ -83,20 +83,33 @@ source install/setup.bash
 ros2 launch system_identification_simulation knee_link_only_sim.py
 ```
 
-**Step 3: Compare Sim vs Real**
+**Step 3: Configure File Paths for Comparison**
+- Edit `compare_sim.py` (lines 589-592)
+- Update `SIM_FILE` to point to your latest simulation output:
+  ```python
+  SIM_FILE = "/home/prime/physical_ai_locomotion_team/sim_signal/world_to_hip_sim_YYYYMMDD_HHMMSS.csv"
+  ```
+- Update `REAL_FILE_OPTIONS` to point to your real experiment data:
+  ```python
+  REAL_FILE_OPTIONS = [
+      "/home/prime/physical_ai_locomotion_team/src/pos_raw_signal/hip_inertia_0deg.csv"
+  ]
+  ```
+
+**Step 4: Run Comparison**
 ```bash
 python3 compare_sim.py
 ```
 
-**Step 4: Adjust Parameters**
+**Step 5: Adjust Parameters**
 - Edit inertia values in URDF: `src/system_identification_description/robot/visual/knee_link_only.xacro`
 - Modify: `knee_ixx`, `knee_iyy`, `knee_izz` (moment of inertia)
 - Modify: `mass_knee`, `knee_inertial_x/y/z` (mass and COM)
 - Modify: `joint_damping`, `joint_friction`
 
-**Step 5: Iterate**
+**Step 6: Iterate**
 - Rebuild: `colcon build --packages-select system_identification_description`
-- Repeat Steps 2-4 until position tracking error < 10%
+- Repeat Steps 2-5 until position tracking error < 10%
 
 ### Running Individual Link Simulations
 
@@ -126,6 +139,30 @@ ros2 run system_identification_simulation log_data.py --ros-args \
 ```
 
 ### Comparing Simulation vs Real Data
+
+**1. Configure File Paths**
+
+Edit `compare_sim.py` (lines 589-596) to set:
+```python
+# File paths
+SIM_FILE = "/home/prime/physical_ai_locomotion_team/sim_signal/world_to_hip_sim_20251219_162153.csv"
+REAL_FILE_OPTIONS = [
+    "/home/prime/physical_ai_locomotion_team/src/pos_raw_signal/hip_inertia_0deg.csv"
+]
+
+# Transformation settings (usually keep at default)
+OFFSET_RAD = 0.0       # Position offset in radians
+INVERT_PHASE = False    # Phase inversion flag
+```
+
+**File Path Guidelines:**
+- `SIM_FILE`: Use the latest timestamped CSV from `sim_signal/` directory
+- `REAL_FILE_OPTIONS`: Match the link you're testing (hip/knee/ankle)
+  - Hip: `src/pos_raw_signal/hip_inertia_0deg.csv`
+  - Knee: `src/pos_raw_signal/trim_link2_inertia_0deg.csv`
+  - Ankle: `src/pos_raw_signal/ankle_link_inertia_m180deg.csv`
+
+**2. Run Comparison**
 
 ```bash
 python3 compare_sim.py
