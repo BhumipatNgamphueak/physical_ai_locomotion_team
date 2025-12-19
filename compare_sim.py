@@ -52,8 +52,6 @@ class SimRealComparison:
         # Apply phase inversion if requested
         phase_multiplier = -1.0 if self.invert_phase else 1.0
         position_final = position_offset * phase_multiplier
-        velocity_final = df['velocity_rad_s'].values * phase_multiplier
-        acceleration_final = (df['acceleration_rad_s2'].values if 'acceleration_rad_s2' in df.columns else np.zeros(len(df))) * phase_multiplier
 
         print(f"\n📐 Applying transformations to simulation data:")
         print(f"   Original range: {position_original.min():.4f} to {position_original.max():.4f} rad")
@@ -61,12 +59,32 @@ class SimRealComparison:
         print(f"   Phase multiplier: {phase_multiplier:.1f} ({'inverted' if self.invert_phase else 'original'})")
         print(f"   Final range: {position_final.min():.4f} to {position_final.max():.4f} rad")
 
+        # Get time data
+        time_s = df['sim_time_sec'].values - df['sim_time_sec'].values[0]
+
+        # Compute velocity from position (same method as real data)
+        velocity_final = np.zeros_like(position_final)
+        dt = np.diff(time_s)
+        velocity_final[:-1] = np.diff(position_final) / dt
+        velocity_final[-1] = velocity_final[-2]
+
+        # Apply Savitzky-Golay filter to smooth velocity (same as real data)
+        window_length = min(51, len(velocity_final) if len(velocity_final) % 2 == 1 else len(velocity_final) - 1)
+        if window_length >= 5:
+            velocity_final = signal.savgol_filter(velocity_final, window_length=window_length, polyorder=3)
+            print(f"   ✓ Velocity recomputed from position using numerical differentiation")
+            print(f"   ✓ Applied Savitzky-Golay filter (window={window_length}, poly=3) to smooth velocity")
+        else:
+            print(f"   ✓ Velocity recomputed from position using numerical differentiation")
+
+        print(f"   Velocity range: {velocity_final.min():.4f} to {velocity_final.max():.4f} rad/s")
+
         # Convert to numpy arrays
         df_clean = pd.DataFrame({
-            'time': df['sim_time_sec'].values - df['sim_time_sec'].values[0],
+            'time': time_s,
             'position': position_final,
             'velocity': velocity_final,
-            'acceleration': acceleration_final
+            'acceleration': np.zeros_like(velocity_final)  # Not used for comparison
         })
 
         return df_clean
@@ -126,6 +144,13 @@ class SimRealComparison:
         velocity_data[:-1] = np.diff(position_data) / dt
         # Use last value for the final point
         velocity_data[-1] = velocity_data[-2]
+
+        # Apply Savitzky-Golay filter to smooth velocity (removes noise from differentiation)
+        # Window length must be odd and >= polynomial order + 2
+        window_length = min(51, len(velocity_data) if len(velocity_data) % 2 == 1 else len(velocity_data) - 1)
+        if window_length >= 5:  # Minimum window size
+            velocity_data = signal.savgol_filter(velocity_data, window_length=window_length, polyorder=3)
+            print(f"   ✓ Applied Savitzky-Golay filter (window={window_length}, poly=3) to smooth velocity")
 
         # Optionally load acceleration (or compute from velocity if needed)
         if 'acceleration_rad_s2' in df_clean.columns:
@@ -342,6 +367,34 @@ class SimRealComparison:
         print("COMPARISON METRICS - KNEE LINK (RADIANS)")
         print("="*60)
 
+        # Calculate oscillation characteristics
+        sim_pos = self.sim_aligned['position'].values
+        real_pos = self.real_aligned['position'].values
+        sim_vel = self.sim_aligned['velocity'].values
+        real_vel = self.real_aligned['velocity'].values
+
+        # Find peaks to estimate frequency
+        from scipy.signal import find_peaks
+        sim_peaks, _ = find_peaks(sim_pos, distance=20)
+        real_peaks, _ = find_peaks(real_pos, distance=20)
+
+        sim_freq = 0
+        real_freq = 0
+        if len(sim_peaks) > 1:
+            sim_period = np.mean(np.diff(self.sim_aligned['time'].values[sim_peaks]))
+            sim_freq = 1.0 / sim_period if sim_period > 0 else 0
+        if len(real_peaks) > 1:
+            real_period = np.mean(np.diff(self.real_aligned['time'].values[real_peaks]))
+            real_freq = 1.0 / real_period if real_period > 0 else 0
+
+        print("\nOSCILLATION DYNAMICS:")
+        print(f"  Sim frequency:  {sim_freq:.3f} Hz (period: {1/sim_freq if sim_freq > 0 else 0:.3f} s)")
+        print(f"  Real frequency: {real_freq:.3f} Hz (period: {1/real_freq if real_freq > 0 else 0:.3f} s)")
+        print(f"  Frequency ratio: {real_freq/sim_freq if sim_freq > 0 else 0:.2f}× (real/sim)")
+        print(f"  Sim velocity peak: {np.max(np.abs(sim_vel)):.2f} rad/s")
+        print(f"  Real velocity peak: {np.max(np.abs(real_vel)):.2f} rad/s")
+        print(f"  Velocity ratio: {np.max(np.abs(real_vel))/np.max(np.abs(sim_vel)) if np.max(np.abs(sim_vel)) > 0 else 0:.2f}× (real/sim)")
+
         print("\nPOSITION ERRORS:")
         print(f"  RMSE:       {self.pos_rmse:.6f} rad")
         print(f"  Max Error:  {self.pos_max_error:.6f} rad")
@@ -533,10 +586,9 @@ def main():
     # ========================================
 
     # File paths
-    SIM_FILE = "/home/prime/physical_ai_locomotion_team/src/sim_signal/world_to_hip_sim_use.csv"
+    SIM_FILE = "/home/prime/physical_ai_locomotion_team/sim_signal/world_to_knee_sim_20251218_010303.csv"
     REAL_FILE_OPTIONS = [
-        "/home/prime/physical_ai_locomotion_team/src/pos_raw_signal/hip_inertia_0deg.csv",
-        "/home/prime/physical_ai_locomotion_team/src/pos_raw_signal/trim_link2_inertia_0deg.csv",
+        "/home/prime/physical_ai_locomotion_team/src/pos_raw_signal/trim_link2_inertia_0deg.csv"
     ]
 
     # Transformation settings

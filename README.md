@@ -86,7 +86,7 @@ ros2 launch system_identification_simulation knee_link_only_sim.py
 
 **Step 3: Compare Sim vs Real**
 ```bash
-python3 src/compare_sim.py
+python3 compare_sim.py
 ```
 
 **Step 4: Adjust Parameters**
@@ -129,7 +129,7 @@ ros2 run system_identification_simulation log_data.py --ros-args \
 ### Comparing Simulation vs Real Data
 
 ```bash
-python3 src/compare_sim.py
+python3 compare_sim.py
 ```
 
 This generates comparison plots showing:
@@ -196,7 +196,7 @@ Controller settings in:
 ### Comparison Settings
 
 Adjust alignment and filtering in:
-- `src/compare_sim.py` (lines 23-42 for physical parameters)
+- `compare_sim.py` (lines 23-42 for physical parameters)
 
 ## Data Format
 

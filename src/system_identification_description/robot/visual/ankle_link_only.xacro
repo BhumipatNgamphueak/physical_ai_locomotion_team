@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!--
+    ============================================================================
+    Ankle Link Only - Simplified Pendulum Setup
+    ============================================================================
+    Description: Single ankle_link suspended from world joint for testing
+    Updated from: ankle_pendulum_complete.xacro
+    ============================================================================
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ankle_link_only">
+
+    <!-- ====================================================================== -->
+    <!-- INCLUDES                                                               -->
+    <!-- ====================================================================== -->
+    <xacro:include filename="ankle_link_gazebo.xacro" />
+
+    <!-- ====================================================================== -->
+    <!-- MATERIALS                                                              -->
+    <!-- ====================================================================== -->
+    <material name="yellow">
+        <color rgba="1.0 1.0 0.0 1.0" />
+    </material>
+
+    <!-- ====================================================================== -->
+    <!-- PHYSICAL PROPERTIES                                                    -->
+    <!-- ====================================================================== -->
+
+    <!-- Ankle Link Mass -->
+    <xacro:property name="mass_ankle" value="0.721" />
+
+    <!-- Ankle Link Center of Mass (Inertial Frame Origin) -->
+    <xacro:property name="ankle_inertial_x" value="0.004248" />
+    <xacro:property name="ankle_inertial_y" value="-0.046" />
+    <xacro:property name="ankle_inertial_z" value="0.0004" />
+
+    <!-- Ankle Link Inertia Tensor -->
+    <xacro:property name="ankle_ixx" value="0.00320" />
+    <xacro:property name="ankle_ixy" value="0.00019" />
+    <xacro:property name="ankle_ixz" value="-0.00004" />
+    <xacro:property name="ankle_iyy" value="0.00141" />
+    <xacro:property name="ankle_iyz" value="-0.00083" />
+    <xacro:property name="ankle_izz" value="0.00280" />
+
+    <!-- Joint Limits -->
+    <xacro:property name="joint_effort_limit" value="50.0" />
+    <xacro:property name="joint_velocity_limit" value="50.0" />
+
+    <!-- Joint Dynamics -->
+    <xacro:property name="joint_damping" value="0.00130" />
+    <xacro:property name="joint_friction" value="0.0140" />
+
+    <!-- ====================================================================== -->
+    <!-- WORLD LINK (Fixed Root)                                                -->
+    <!-- ====================================================================== -->
+    <link name="world">
+        <!-- Empty link - serves as fixed world reference -->
+    </link>
+
+    <gazebo reference="world">
+        <static>true</static>
+    </gazebo>
+
+    <!-- ====================================================================== -->
+    <!-- WORLD TO ANKLE JOINT (Continuous - Pendulum)                           -->
+    <!-- ====================================================================== -->
+    <joint name="world_to_ankle" type="continuous">
+        <parent link="world" />
+        <child link="ankle_link" />
+        <!-- Position: 1.0m above ground -->
+        <origin xyz="0 0 1.0" rpy="0 0 0" />
+        <!-- Rotation axis: Y-axis (pitch motion) -->
+        <axis xyz="0 1 0" />
+        <!-- Joint limits -->
+        <limit effort="${joint_effort_limit}" velocity="${joint_velocity_limit}" />
+        <!-- Joint damping and friction -->
+        <dynamics damping="${joint_damping}" friction="${joint_friction}" />
+    </joint>
+
+    <!-- ====================================================================== -->
+    <!-- ANKLE LINK                                                             -->
+    <!-- ====================================================================== -->
+    <link name="ankle_link">
+
+        <!-- Inertial Properties -->
+        <inertial>
+            <origin
+                xyz="${ankle_inertial_x} ${ankle_inertial_y} ${ankle_inertial_z}"
+                rpy="0 0 0" />
+            <mass value="${mass_ankle}" />
+            <inertia
+                ixx="${ankle_ixx}"  ixy="${ankle_ixy}"  ixz="${ankle_ixz}"
+                                    iyy="${ankle_iyy}"  iyz="${ankle_iyz}"
+                                                       izz="${ankle_izz}" />
+        </inertial>
+
+        <!-- Visual Representation -->
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://system_identification_description/meshes/ankle_link.STL" />
+            </geometry>
+            <material name="yellow" />
+        </visual>
+
+        <!-- Collision Geometry -->
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder length="0.2" radius="0.025" />
+            </geometry>
+        </collision>
+
+    </link>
+
+</robot>
