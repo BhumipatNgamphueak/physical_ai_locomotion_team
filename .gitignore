@@ -3,9 +3,6 @@
 src/.vscode/
 *.db
 *.db-shm
-<<<<<<< Updated upstream
-/src/.vscode
-=======
 
 # ROS2 Build Artifacts
 build/
@@ -32,4 +29,3 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
->>>>>>> Stashed changes
