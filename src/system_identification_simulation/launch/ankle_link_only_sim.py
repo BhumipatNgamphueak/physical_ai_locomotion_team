@@ -24,7 +24,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     # Package directories
-    desc_pkg = get_package_share_directory('test_station_description')
+    desc_pkg = get_package_share_directory('system_identification_description')
     install_share_dir = os.path.dirname(desc_pkg)
     
     # Gazebo resource paths
@@ -44,7 +44,7 @@ def generate_launch_description():
 
     # Robot description XACRO file
     xacro_file = PathJoinSubstitution([
-        FindPackageShare('test_station_description'),
+        FindPackageShare('system_identification_description'),
         'robot',
         'visual',
         'ankle_pendulum_complete.xacro'

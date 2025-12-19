@@ -18,8 +18,8 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     
-    desc_pkg = get_package_share_directory('test_station_description')
-    sim_pkg = get_package_share_directory('test_station_simulation')
+    desc_pkg = get_package_share_directory('system_identification_description')
+    sim_pkg = get_package_share_directory('system_identification_simulation')
     install_share_dir = os.path.dirname(desc_pkg)
     
     # Gazebo resource paths
@@ -37,13 +37,13 @@ def generate_launch_description():
 
     # XACRO file (hip only)
     xacro_file = PathJoinSubstitution([
-        FindPackageShare('test_station_description'),
+        FindPackageShare('system_identification_description'),
         'robot', 'visual', 'hip_link_only.xacro'
     ])
     
     # Controller config
     controller_config = PathJoinSubstitution([
-        FindPackageShare('test_station_simulation'),
+        FindPackageShare('system_identification_simulation'),
         'config', 'hip_pendulum_controller.yaml'
     ])
     
@@ -140,7 +140,7 @@ def generate_launch_description():
 
     # Gravity Enabler - enables gravity after delay for clean start
     gravity_enabler = Node(
-        package='test_station_simulation',
+        package='system_identification_simulation',
         executable='gravity_enabler.py',
         name='gravity_enabler',
         output='screen',

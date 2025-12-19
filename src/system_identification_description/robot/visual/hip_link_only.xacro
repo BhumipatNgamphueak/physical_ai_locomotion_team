@@ -86,7 +86,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://test_station_description/meshes/hip_link_v2.STL" />
+                <mesh filename="package://system_identification_description/meshes/hip_link_v2.STL" />
             </geometry>
             <material name="green" />
         </visual>
@@ -95,7 +95,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://test_station_description/meshes/hip_link_v2.STL" />
+                <mesh filename="package://system_identification_description/meshes/hip_link_v2.STL" />
             </geometry>
         </collision>
 

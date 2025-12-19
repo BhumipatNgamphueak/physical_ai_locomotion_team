@@ -35,28 +35,29 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     # Package shares
-    desc_pkg = get_package_share_directory('test_station_description')
-    sim_pkg = get_package_share_directory('test_station_simulation')
+    desc_pkg = get_package_share_directory('system_identification_description')
+    test_desc_pkg = get_package_share_directory('test_station_description')
+    sim_pkg = get_package_share_directory('system_identification_simulation')
 
     # Get the parent directory (install/share) to make model:// URIs work
     install_share_dir = os.path.dirname(desc_pkg)
-    
+
     # Set Gazebo resource paths
     gz_model_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
-        value=install_share_dir + ':' + 
+        value=install_share_dir + ':' + os.path.join(test_desc_pkg, 'meshes') + ':' +
               os.environ.get('GZ_SIM_RESOURCE_PATH', '')
     )
-    
+
     ign_model_path = SetEnvironmentVariable(
         name='IGN_GAZEBO_RESOURCE_PATH',
-        value=install_share_dir + ':' + 
+        value=install_share_dir + ':' + os.path.join(test_desc_pkg, 'meshes') + ':' +
               os.environ.get('IGN_GAZEBO_RESOURCE_PATH', '')
     )
 
     # Robot description (xacro)
     xacro_file = PathJoinSubstitution([
-        FindPackageShare('test_station_description'), 
+        FindPackageShare('test_station_description'),
         'robot',
         'visual',
         'test_station.xacro'
@@ -64,7 +65,7 @@ def generate_launch_description():
     
     # IMPORTANT: Pass the controller config path as xacro parameter
     controller_config = PathJoinSubstitution([
-        FindPackageShare('test_station_simulation'),
+        FindPackageShare('system_identification_simulation'),
         'config',
         'controller_full.yaml'
     ])

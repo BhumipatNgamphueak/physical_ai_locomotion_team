@@ -26,10 +26,10 @@ find_package(rclpy REQUIRED)                	# python (optional)
 ament_python_install_package(${PROJECT_NAME})
 
 # Install Python executables
-install(PROGRAMS
-  scripts/dummy_script.py
-  DESTINATION lib/${PROJECT_NAME}
-)
+# install(PROGRAMS
+#   scripts/dummy_script.py
+#   DESTINATION lib/${PROJECT_NAME}
+# )
 
 
 # Include Cpp "include" directory

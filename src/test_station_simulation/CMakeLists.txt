@@ -27,7 +27,6 @@ ament_python_install_package(${PROJECT_NAME})
 
 # Install Python executables
 install(PROGRAMS
-  scripts/log_data.py
   scripts/gravity_enabler.py
   scripts/pendulum_release_controller.py
   DESTINATION lib/${PROJECT_NAME}
@@ -51,7 +50,6 @@ install(TARGETS
 install(DIRECTORY
   # add directories here
   config
-  launch
   rviz
   DESTINATION share/${PROJECT_NAME})
 

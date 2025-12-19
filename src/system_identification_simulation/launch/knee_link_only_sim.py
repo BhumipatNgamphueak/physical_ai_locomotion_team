@@ -18,8 +18,8 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     
-    desc_pkg = get_package_share_directory('test_station_description')
-    sim_pkg = get_package_share_directory('test_station_simulation')
+    desc_pkg = get_package_share_directory('system_identification_description')
+    sim_pkg = get_package_share_directory('system_identification_simulation')
     install_share_dir = os.path.dirname(desc_pkg)
     
     gz_model_path = SetEnvironmentVariable(
@@ -35,12 +35,12 @@ def generate_launch_description():
     )
 
     xacro_file = PathJoinSubstitution([
-        FindPackageShare('test_station_description'),
+        FindPackageShare('system_identification_description'),
         'robot', 'visual', 'knee_link_only.xacro'
     ])
     
     controller_config = PathJoinSubstitution([
-        FindPackageShare('test_station_simulation'),
+        FindPackageShare('system_identification_simulation'),
         'config', 'knee_pendulum_controller.yaml'
     ])
     
@@ -124,7 +124,7 @@ def generate_launch_description():
 
     # Data Logger - starts automatically with small delay
     data_logger = Node(
-        package='test_station_simulation',
+        package='system_identification_simulation',
         executable='log_data.py',
         name='data_logger',
         output='screen',
