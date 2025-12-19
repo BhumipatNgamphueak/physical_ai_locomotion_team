@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="TestStation_Draft1">
+  <link
+    name="hip_link">
+    <inertial>
+      <origin
+        xyz="0.1147 -0.0028081 0.063902"
+        rpy="0 0 0" />
+      <mass
+        value="0.10206" />
+      <inertia
+        ixx="9.4939E-05"
+        ixy="8.3454E-06"
+        ixz="2.7303E-06"
+        iyy="0.00012571"
+        iyz="-1.815E-07"
+        izz="0.0001244" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://TestStation_Draft1/meshes/hip_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.96863 0.87843 0.6 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://TestStation_Draft1/meshes/hip_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="knee_limk">
+    <inertial>
+      <origin
+        xyz="0.116429440311208 0.0883639193580518 0.00591783601868756"
+        rpy="0 0 0" />
+      <mass
+        value="0.144527625042502" />
+      <inertia
+        ixx="6.93649683348219E-05"
+        ixy="-5.99440345019126E-05"
+        ixz="-4.45604532346445E-12"
+        iyy="0.000193478951163654"
+        iyz="4.65474653616758E-12"
+        izz="0.000224180543883666" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://TestStation_Draft1/meshes/knee_limk.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://TestStation_Draft1/meshes/knee_limk.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="knee Joint"
+    type="continuous">
+    <origin
+      xyz="0.077999 0 0"
+      rpy="1.5708 0 0" />
+    <parent
+      link="hip_link" />
+    <child
+      link="knee_limk" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>

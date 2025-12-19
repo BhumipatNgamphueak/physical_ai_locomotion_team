@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ankle_minimal_autostart">
+    
+    <link name="world"/>
+    
+    <joint name="world_to_ankle" type="continuous">
+        <parent link="world"/>
+        <child link="ankle_link"/>
+
+        <!--
+           ORIENTATION LOGIC - MATCHES REAL HARDWARE:
+           0 rad = Horizontal (leg pointing forward)
+           -π/2 rad (-90°) = Vertical down (hanging, steady state)
+           -30° = -0.523843 rad (typical starting position)
+
+           rpy="0 0 0" means joint rotation axis is along z-axis (pitch rotation)
+        -->
+        <origin xyz="0 0 1.0" rpy="0 0 0"/>
+
+        <axis xyz="0 1 0"/>  <!-- Y-axis for pitch rotation -->
+
+        <!-- Damping 0.0 allows it to swing freely for inertia calculation -->
+        <dynamics damping="0.00130" friction="0.0140"/>
+    </joint>
+
+    <link name="ankle_link">
+        <inertial>
+            <origin xyz="0.004248 -0.046 0.0004" rpy="0 0 0"/>
+            <mass value="0.721"/>
+            <inertia ixx="0.00320" ixy="0.00019" ixz="-0.00004"
+                     iyy="0.00141" iyz="-0.00083"
+                     izz="0.00280"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://test_station_description/meshes/ankle_link.STL"/>
+            </geometry>
+            <material name="yellow">
+                <color rgba="1.0 1.0 0.0 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="0.2" radius="0.025"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- ========================================= -->
+    <!-- GAZEBO CONFIGURATION                      -->
+    <!-- ========================================= -->
+    
+    <gazebo reference="world">
+        <static>true</static>
+    </gazebo>
+    
+    <gazebo reference="ankle_link">
+        <gravity>true</gravity>  <!-- ✅ EXPLICIT GRAVITY -->
+        <self_collide>false</self_collide>
+        <material>Gazebo/Yellow</material>
+    </gazebo>
+
+    <!--
+       Joint State Publisher Plugin
+       Publishes to Gazebo's /joint_states topic
+       (Needs ROS2 bridge to be visible in ROS2!)
+    -->
+    <gazebo>
+        <plugin filename="libignition-gazebo-joint-state-publisher-system.so"
+                name="ignition::gazebo::systems::JointStatePublisher">
+            <topic>/joint_states</topic>
+            <joint_name>world_to_ankle</joint_name>
+        </plugin>
+    </gazebo>
+
+</robot>

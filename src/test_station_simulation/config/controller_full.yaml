@@ -1,0 +1,33 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+    use_sim_time: true
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    # OPTION 1: Single leg controller (recommended for test station)
+    leg_effort_controller:
+      type: effort_controllers/JointGroupEffortController
+
+    # OPTION 2: If you want position control for linear actuators (optional)
+    # linear_position_controller:
+    #   type: position_controllers/JointGroupPositionController
+
+
+# Leg effort controller - for hip, knee, ankle
+leg_effort_controller:
+  ros__parameters:
+    use_sim_time: true
+    joints:
+      - hip_joint
+      - knee_joint
+      - ankle_joint
+
+# Optional: Linear actuator position controller (uncomment if needed)
+# linear_position_controller:
+#   ros__parameters:
+#     use_sim_time: true
+#     joints:
+#       - linear_left_right_joint
+#       - linear_up_down_joint
