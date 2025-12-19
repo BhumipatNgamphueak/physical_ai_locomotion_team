@@ -20,8 +20,8 @@ class JointStateLogger(Node):
         
         # Parameters
         self.declare_parameter('output_dir', 'sim_signal')
-        self.declare_parameter('joint_name', 'world_to_knee')
-        self.declare_parameter('duration', 5.0)  # Duration in seconds
+        self.declare_parameter('joint_name', 'world_to_hip')
+        self.declare_parameter('duration', 20.0)  # Duration in seconds
         self.declare_parameter('log_rate', 0.0)   # 0 = log every message, >0 = specific rate
         
         # Get parameters

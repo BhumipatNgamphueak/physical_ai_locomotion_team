@@ -11,22 +11,20 @@ This project implements a **system identification workflow** to find accurate in
 3. **Comparison Analysis**: Automated trajectory alignment and error metrics (RMSE, correlation)
 4. **Iterative Refinement**: Trial-and-error tuning of simulation parameters until sim matches real data
 
-The goal is to obtain physically accurate inertia tensors that enable high-fidelity simulation for locomotion control development.
+**Goal: Position tracking error < 10%** - Obtain physically accurate inertia tensors that enable high-fidelity simulation for locomotion control development.
 
 ## Project Structure
 
 ```
 physical_ai_locomotion_team/
-├── src/
+├── src/                                    # ROS2 source packages
 │   ├── system_identification_description/  # Individual link URDF models (hip, knee, ankle)
 │   ├── system_identification_simulation/   # Pendulum test simulations and data logging
-│   ├── test_station_description/           # Full test station URDF (integrated system)
-│   ├── test_station_simulation/            # Full system simulation
-│   ├── test_station/                       # Kinematics and control algorithms
-│   ├── controller/                         # Hardware interface layer
-│   ├── pos_raw_signal/                     # Real hardware experimental data (CSV)
-│   └── sim_signal/                         # Reference simulation baseline
-├── sim_signal/                             # Timestamped simulation trial outputs
+│   ├── test_station_description/           # Full test station URDF (integrated 7-DOF system)
+│   ├── test_station_simulation/            # Full system simulation environment
+│   ├── test_station/                       # Kinematics and control algorithms (skeleton)
+│   └── pos_raw_signal/                     # Real hardware experimental data (CSV)
+├── sim_signal/                             # Timestamped simulation trial outputs (generated)
 ├── results/                                # Comparison plots and analysis results
 ├── compare_sim.py                          # Sim vs real comparison and alignment tool
 └── Diagnose.py                             # Data validation utility
@@ -45,9 +43,10 @@ physical_ai_locomotion_team/
 ## Requirements
 
 - ROS2 Humble
-- Gazebo Classic
+- Gazebo Classic (Ignition Gazebo)
 - Python 3.8+
-- Required Python packages: `pandas`, `numpy`, `matplotlib`
+- Required Python packages: `pandas`, `numpy`, `matplotlib`, `scipy`
+- ROS2 packages: `ros_gz_sim`, `ros_gz_bridge`, `robot_state_publisher`, `controller_manager`
 
 ## Installation
 
@@ -60,7 +59,7 @@ cd physical_ai_locomotion_team
 2. Install dependencies:
 ```bash
 rosdep install --from-paths src --ignore-src -r -y
-pip3 install pandas numpy matplotlib
+pip3 install pandas numpy matplotlib scipy
 ```
 
 3. Build the workspace:
@@ -97,7 +96,7 @@ python3 compare_sim.py
 
 **Step 5: Iterate**
 - Rebuild: `colcon build --packages-select system_identification_description`
-- Repeat Steps 2-4 until RMSE is minimized
+- Repeat Steps 2-4 until position tracking error < 10%
 
 ### Running Individual Link Simulations
 
@@ -138,15 +137,59 @@ This generates comparison plots showing:
 - Phase portraits
 - Error metrics (RMSE, correlation)
 
+## Package Architecture
+
+The project is organized into two main systems:
+
+### System Identification Packages (Individual Link Testing)
+- **system_identification_description**: URDF/XACRO models for isolated hip, knee, and ankle links
+  - Contains individual link mesh files and inertial parameters
+  - Single-link pendulum models suspended from world joint
+  - Primary location for inertial parameter tuning
+- **system_identification_simulation**: Simulation environment for pendulum experiments
+  - Launch files for hip, knee, and ankle pendulum tests
+  - High-frequency data logger (`log_data.py`)
+  - Controller configurations for effort control
+  - Gravity enabler and release controller scripts
+
+### Test Station Packages (Full Integrated System)
+- **test_station_description**: Complete 7-DOF robot model
+  - Kinematic chain: base → linear stages → hip → knee → ankle → end effector
+  - Full system URDF with actuators and mechanical constraints
+  - Used only for full system simulations (not individual link testing)
+- **test_station_simulation**: Full system simulation environment
+  - Provides gravity enabler and pendulum release controller
+  - Simulation configs for full robot
+- **test_station**: Control and kinematics library (skeleton implementations)
+  - Forward/inverse kinematics
+  - PID controllers (position and velocity)
+  - Trajectory planning utilities
+  - **Note**: These are placeholder implementations for future development
+
+**Package Separation**: Individual link models and full system models are kept separate to enable focused parameter tuning on isolated components before integration testing.
+
 ## Key Components
 
 ### 1. Parametric Robot Models
 
 Inertial parameters defined in xacro files (tunable for system identification):
-- **Hip Link**: 0.425 kg, Izz = 0.00050 kg·m² (example values)
-- **Knee Link**: 0.091 kg, Izz = 0.000175 kg·m² (example values)
-- **Ankle Link**: 0.721 kg, Izz = 0.00280 kg·m² (example values)
-- Center-of-mass positions and full inertia tensors
+
+**Hip Link** (`hip_link_only.xacro`):
+- Mass: 0.425 kg
+- Inertia: Izz = 0.00050 kg·m²
+- Joint: world_to_hip (continuous, damping=0.000325 N·m·s/rad, friction=0.00270 N·m)
+
+**Knee Link** (`knee_link_only.xacro`):
+- Mass: 0.091 kg
+- Inertia: Izz = 0.000175 kg·m²
+- Joint: world_to_knee (continuous, damping=0.0004 N·m·s/rad, friction=0.0008 N·m)
+
+**Ankle Link** (`ankle_link_only.xacro`):
+- Mass: 0.721 kg
+- Inertia: Izz = 0.00280 kg·m²
+- Joint: world_to_ankle (continuous, damping=0.00130 N·m·s/rad, friction=0.0140 N·m)
+
+All models include full 3x3 inertia tensors and center-of-mass positions for accurate dynamics.
 
 ### 2. Free-Fall Pendulum Simulation
 
@@ -200,11 +243,20 @@ Adjust alignment and filtering in:
 
 ## Data Format
 
-All CSV files contain:
+**Simulation CSV files** (`sim_signal/`) contain:
+- `timestamp`: Wall clock time
 - `sim_time_sec`: Simulation time (reset to 0 at logging start)
 - `position_rad`: Joint position in radians
 - `velocity_rad_s`: Joint velocity in rad/s
-- `effort_N_m`: Applied joint effort in N·m
+- `effort_Nm`: Applied joint effort in N·m
+- `acceleration_rad_s2`: Computed acceleration in rad/s²
+
+**Real hardware CSV files** (`src/pos_raw_signal/`) contain:
+- `date`, `time`: Timestamp information
+- `timestamp`: Milliseconds since epoch
+- `position_rad`: Joint position in radians
+- `velocity_rad_s`: Joint velocity in rad/s
+- `acceleration_rad_s2`: Joint acceleration in rad/s²
 
 ## Contributing
 
@@ -239,6 +291,21 @@ This project uses an empirical approach to find inertial parameters:
 - Manual iteration can be time-consuming
 - May not find global optimum
 - Requires experience to interpret error patterns
+
+## Recent Updates
+
+**December 2025:**
+- Cleaned up redundant files between `test_station` and `system_identification` packages
+- Consolidated individual link XACRO files in `system_identification_description`
+- Updated launch files to reference correct package locations
+- Fixed mesh file references to use `system_identification_description` package
+- Removed duplicate launch files and dummy placeholder files
+- Updated CMakeLists.txt files to reflect current package structure
+
+**Current Focus:**
+- Hip link parameter tuning in progress (31 simulation trials on 2025-12-19)
+- Iterative RMSE minimization through manual parameter adjustment
+- **Goal: Position tracking error < 10%** between simulation and real hardware
 
 ## Acknowledgments
 

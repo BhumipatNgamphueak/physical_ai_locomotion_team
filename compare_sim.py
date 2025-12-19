@@ -586,9 +586,9 @@ def main():
     # ========================================
 
     # File paths
-    SIM_FILE = "/home/prime/physical_ai_locomotion_team/sim_signal/world_to_knee_sim_20251218_010303.csv"
+    SIM_FILE = "/home/prime/physical_ai_locomotion_team/sim_signal/world_to_hip_sim_20251219_162153.csv"
     REAL_FILE_OPTIONS = [
-        "/home/prime/physical_ai_locomotion_team/src/pos_raw_signal/trim_link2_inertia_0deg.csv"
+        "/home/prime/physical_ai_locomotion_team/src/pos_raw_signal/hip_inertia_0deg.csv"
     ]
 
     # Transformation settings
