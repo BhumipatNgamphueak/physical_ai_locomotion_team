@@ -454,33 +454,29 @@ class SimRealComparison:
         sim_interp_vel = self.sim_interp['velocity'].values
         real_interp_pos = self.real_interp['position'].values
         real_interp_vel = self.real_interp['velocity'].values
-        
-        # Limit plotting to comparison range only (20 seconds max)
-        max_plot_time = min(20.0, self.common_time[-1])
-        sim_plot_mask = sim_time <= max_plot_time
-        real_plot_mask = real_time <= max_plot_time
-        
+
+        # Show full graph without trimming
+        max_plot_time = max(sim_time[-1], real_time[-1])
+
         # Position comparison
         ax = axes[0, 0]
-        ax.plot(sim_time[sim_plot_mask], sim_pos[sim_plot_mask], 'b-', label='Simulation', linewidth=2)
-        ax.plot(real_time[real_plot_mask], real_pos[real_plot_mask], 'r--', label='Real', linewidth=2, alpha=0.7)
+        ax.plot(sim_time, sim_pos, 'b-', label='Simulation', linewidth=2)
+        ax.plot(real_time, real_pos, 'r--', label='Real', linewidth=2, alpha=0.7)
         ax.set_xlabel('Time (s)')
         ax.set_ylabel('Position (rad)')
-        ax.set_title('Position Trajectory')
+        ax.set_title('Position Trajectory (Full Data)')
         ax.legend()
         ax.grid(True, alpha=0.3)
-        ax.set_xlim([0, max_plot_time])
-        
+
         # Velocity comparison
         ax = axes[1, 0]
-        ax.plot(sim_time[sim_plot_mask], sim_vel[sim_plot_mask], 'b-', label='Simulation', linewidth=2)
-        ax.plot(real_time[real_plot_mask], real_vel[real_plot_mask], 'r--', label='Real', linewidth=2, alpha=0.7)
+        ax.plot(sim_time, sim_vel, 'b-', label='Simulation', linewidth=2)
+        ax.plot(real_time, real_vel, 'r--', label='Real', linewidth=2, alpha=0.7)
         ax.set_xlabel('Time (s)')
         ax.set_ylabel('Velocity (rad/s)')
-        ax.set_title('Velocity Trajectory')
+        ax.set_title('Velocity Trajectory (Full Data)')
         ax.legend()
         ax.grid(True, alpha=0.3)
-        ax.set_xlim([0, max_plot_time])
         
         # Position error
         ax = axes[0, 1]
@@ -506,11 +502,11 @@ class SimRealComparison:
         
         # Phase plot
         ax = axes[2, 0]
-        ax.plot(sim_pos[sim_plot_mask], sim_vel[sim_plot_mask], 'b-', label='Simulation', linewidth=2, alpha=0.7)
-        ax.plot(real_pos[real_plot_mask], real_vel[real_plot_mask], 'r-', label='Real', linewidth=2, alpha=0.7)
+        ax.plot(sim_pos, sim_vel, 'b-', label='Simulation', linewidth=2, alpha=0.7)
+        ax.plot(real_pos, real_vel, 'r-', label='Real', linewidth=2, alpha=0.7)
         ax.set_xlabel('Position (rad)')
         ax.set_ylabel('Velocity (rad/s)')
-        ax.set_title('Phase Portrait')
+        ax.set_title('Phase Portrait (Full Data)')
         ax.legend()
         ax.grid(True, alpha=0.3)
         
@@ -586,7 +582,7 @@ def main():
     # ========================================
 
     # File paths
-    SIM_FILE = "/home/prime/physical_ai_locomotion_team/sim_signal/world_to_hip_sim_20251219_162153.csv"
+    SIM_FILE = "/home/prime/physical_ai_locomotion_team/sim_signal/world_to_hip_sim_20251221_141131.csv"
     REAL_FILE_OPTIONS = [
         "/home/prime/physical_ai_locomotion_team/src/pos_raw_signal/hip_inertia_0deg.csv"
     ]

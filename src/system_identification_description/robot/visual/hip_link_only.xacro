@@ -39,7 +39,7 @@
     <xacro:property name="hip_ixz" value="0.0" />
     <xacro:property name="hip_iyy" value="0.00120" />
     <xacro:property name="hip_iyz" value="0.0" />
-    <xacro:property name="hip_izz" value="0.0005" />
+    <xacro:property name="hip_izz" value="0.000425" />
 
     <!-- ====================================================================== -->
     <!-- WORLD LINK (Fixed Root)                                                -->
@@ -62,7 +62,7 @@
         <!-- Rotation axis: Z-axis (pitch motion when rotated) -->
         <axis xyz="0 0 1" />
         <!-- No damping or friction for free pendulum motion -->
-        <dynamics damping="0.000325" friction="0.00270" />
+        <dynamics damping="0.000375" friction="0.00350" />
     </joint>
 
     <!-- ====================================================================== -->

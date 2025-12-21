@@ -29,6 +29,7 @@ ament_python_install_package(${PROJECT_NAME})
 install(PROGRAMS
 #   scripts/dummy_script.py
     scripts/log_data.py
+    scripts/gravity_enabler.py
     DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -50,6 +51,7 @@ install(TARGETS
 install(DIRECTORY
   launch
   config
+  rviz
   DESTINATION share/${PROJECT_NAME})
 
 ament_package()

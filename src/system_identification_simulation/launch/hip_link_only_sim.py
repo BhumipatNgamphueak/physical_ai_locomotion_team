@@ -160,8 +160,7 @@ def generate_launch_description():
         robot_state_publisher,
         spawn_entity,
         bridge,
-        TimerAction(period=5.0, actions=[joint_state_broadcaster]),
-        TimerAction(period=7.0, actions=[pendulum_controller]),
-        TimerAction(period=8.0, actions=[gravity_enabler]),  # Enable gravity after controllers ready
+        TimerAction(period=0.0, actions=[joint_state_broadcaster]),
+        TimerAction(period=0.0, actions=[pendulum_controller]),
         rviz
     ])

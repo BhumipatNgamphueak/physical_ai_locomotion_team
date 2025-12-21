@@ -13,7 +13,7 @@
     <!-- CONFIGURATION ARGUMENTS                                                -->
     <!-- ====================================================================== -->
     <xacro:arg name="controller_config_file"
-               default="$(find test_station_simulation)/config/hip_pendulum_controller.yaml" />
+               default="$(find system_identification_simulation)/config/hip_pendulum_controller.yaml" />
 
     <!-- ====================================================================== -->
     <!-- ROS2 CONTROL SYSTEM                                                    -->

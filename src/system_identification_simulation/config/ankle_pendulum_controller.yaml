@@ -10,7 +10,7 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    pendulum_effort_controller:
+    ankle_pendulum_controller:
       type: effort_controllers/JointGroupEffortController
 
 
@@ -24,11 +24,11 @@ joint_state_broadcaster:
 
 
 # ========================================
-# PENDULUM EFFORT CONTROLLER
+# ANKLE PENDULUM CONTROLLER
 # Controls the world_to_ankle joint with effort commands
 # Allows pendulum swing motion
 # ========================================
-pendulum_effort_controller:
+ankle_pendulum_controller:
   ros__parameters:
     use_sim_time: true
     
